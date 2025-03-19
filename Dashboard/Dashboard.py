@@ -13,7 +13,7 @@ st.title("Dashboard Analisis Kualitas Udara")
 # Load Data
 @st.cache_data
 def load_data():
-    url = "https://github.com/ezVlee/project/blob/main/Dashboard/PRSA_Data_Nongzhanguan_20130301-20170228.csv"
+    url = "https://raw.githubusercontent.com/ezVlee/project/refs/heads/main/Dashboard/PRSA_Data_Nongzhanguan_20130301-20170228.csv"
     df = pd.read_csv(url)
     df_cleaned = df.dropna()
     df_cleaned['date'] = pd.to_datetime(df[['year', 'month', 'day', 'hour']])
