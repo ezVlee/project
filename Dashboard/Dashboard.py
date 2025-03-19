@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Konfigurasi tampilan
 st.set_page_config(page_title="Dashboard Kualitas Udara", layout="wide")
 
 # Judul Dashboard
@@ -32,7 +31,6 @@ def load_data():
 
 df_cleaned = load_data()
 
-# Pastikan data berhasil dimuat sebelum lanjut
 if df_cleaned is not None:
     # Sidebar
     st.sidebar.header("Pilih Analisis")
