@@ -26,5 +26,5 @@ pip install -r requirements.txt
 
 ### 4️⃣ Jalankan Streamlit App
 ```sh
-streamlit run app.py
+streamlit run Dashboard.py
 ```
