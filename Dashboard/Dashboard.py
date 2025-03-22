@@ -41,6 +41,7 @@ if df_cleaned is not None:
         
         # Rata-rata tahunan
         df_yearly = df_cleaned.resample('Y').mean(numeric_only=True)
+        df_yearly = df_yearly.drop(columns=['year', 'month', 'day', 'hour'], errors='ignore')
         fig, ax = plt.subplots(figsize=(10, 5))
         for year, row in df_yearly.iterrows():
             ax.bar(row.index, row.values, label=str(year.year))
