@@ -42,21 +42,22 @@ if df_cleaned is not None:
         # Rata-rata tahunan
         df_yearly = df_cleaned.resample('Y').mean(numeric_only=True)
         df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]  # Hanya polutan
-        fig, ax = plt.subplots(figsize=(10, 5))
-        df_yearly.plot(kind='bar', ax=ax)
-        ax.set_title("Rata-rata Polutan per Tahun")
-        ax.set_ylabel("Konsentrasi (µg/m³)")
-        ax.set_xlabel("Tahun")
-        ax.legend(title="Polutan")
-        ax.grid(axis='y', linestyle='--', alpha=0.7)
-        st.pyplot(fig)
         
-        # Rata-rata bulanan
-        df_monthly = df_cleaned.resample('M').mean(numeric_only=True)
-        df_monthly = df_monthly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]  # Hanya polutan
+        for year in df_yearly.index.year.unique():
+            fig, ax = plt.subplots(figsize=(10, 5))
+            df_yearly.loc[str(year)].plot(kind='bar', ax=ax)
+            ax.set_title(f"Rata-rata Polutan Tahun {year}")
+            ax.set_ylabel("Konsentrasi (µg/m³)")
+            ax.set_xlabel("Polutan")
+            ax.legend(title="Polutan")
+            ax.grid(axis='y', linestyle='--', alpha=0.7)
+            st.pyplot(fig)
+
+        df_monthly_avg = df_cleaned.groupby(df_cleaned.index.month).mean(numeric_only=True)
+        df_monthly_avg = df_monthly_avg[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
         fig, ax = plt.subplots(figsize=(12, 6))
-        df_monthly.plot(kind='bar', ax=ax)
-        ax.set_title("Rata-rata Polutan per Bulan")
+        df_monthly_avg.plot(kind='bar', ax=ax)
+        ax.set_title("Rata-rata Polutan per Bulan dalam 5 Tahun")
         ax.set_ylabel("Konsentrasi (µg/m³)")
         ax.set_xlabel("Bulan")
         ax.legend(title="Polutan")
