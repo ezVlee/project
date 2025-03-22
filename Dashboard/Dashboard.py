@@ -41,22 +41,20 @@ if df_cleaned is not None:
         
         # Rata-rata tahunan
         df_yearly = df_cleaned.resample('Y').mean(numeric_only=True)
+        fig, ax = plt.subplots(figsize=(10, 5))
         for year, row in df_yearly.iterrows():
-            fig, ax = plt.subplots(figsize=(8, 5))
-            bars = ax.bar(row.index, row.values, color=['#FF9999', '#66B2FF', '#99FF99', '#FFCC99', '#C2C2F0'])
-            for bar in bars:
-                yval = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 2), ha='center', va='bottom', fontsize=10)
-            ax.set_title(f'Rata-rata Polutan Tahun {year.year}')
-            ax.set_ylabel('Konsentrasi (µg/m³)')
-            ax.set_xlabel('Polutan')
-            ax.grid(axis='y', linestyle='--', alpha=0.7)
-            st.pyplot(fig)
+            ax.bar(row.index, row.values, label=str(year.year))
+        ax.set_title("Rata-rata Polutan per Tahun")
+        ax.set_ylabel("Konsentrasi (µg/m³)")
+        ax.set_xlabel("Polutan")
+        ax.legend(title="Tahun")
+        ax.grid(axis='y', linestyle='--', alpha=0.7)
+        st.pyplot(fig)
         
         # Rata-rata bulanan
         df_monthly = df_cleaned.resample('M').mean(numeric_only=True)
         fig, ax = plt.subplots(figsize=(12, 6))
-        df_monthly.plot(kind='bar', ax=ax, colormap='viridis')
+        df_monthly.plot(kind='bar', ax=ax)
         ax.set_title("Rata-rata Polutan per Bulan")
         ax.set_ylabel("Konsentrasi (µg/m³)")
         ax.set_xlabel("Bulan")
