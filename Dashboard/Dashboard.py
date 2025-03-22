@@ -37,11 +37,11 @@ if df_cleaned is not None:
     menu = st.sidebar.radio("Navigasi", ["Tren Polusi Udara", "Faktor yang Mempengaruhi Kualitas Udara"])
 
     if menu == "Tren Polusi Udara":
-        st.subheader("Tren Polusi Udara per Tahun dan Bulan")
+        st.subheader("Tren Polusi Udara per Tahun")
         
         # Rata-rata tahunan
         df_yearly = df_cleaned.resample('Y').mean(numeric_only=True)
-        df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]  # Hanya polutan
+        df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
         
         for year in df_yearly.index.year.unique():
             fig, ax = plt.subplots(figsize=(10, 5))
