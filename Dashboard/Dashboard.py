@@ -58,8 +58,20 @@ if df_cleaned is not None:
         st.pyplot(fig)
         
         # Rata-rata per tahun dalam rentang yang dipilih
-        df_yearly = df_filtered.resample('Y').mean(numeric_only=True)
-        df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
+        if not df_filtered.empty:
+            df_yearly = df_filtered.resample('Y').mean(numeric_only=True)
+            df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
+            
+            fig, ax = plt.subplots(figsize=(12, 6))
+            df_yearly.plot(kind='bar', ax=ax)
+            ax.set_title("Rata-rata Polutan per Tahun dalam Rentang yang Dipilih")
+            ax.set_ylabel("Konsentrasi (µg/m³)")
+            ax.set_xlabel("Tahun")
+            ax.legend(title="Polutan")
+            ax.grid(axis='y', linestyle='--', alpha=0.7)
+            st.pyplot(fig)
+        else:
+            st.warning("Tidak ada data dalam rentang tahun yang dipilih.")
         
         # Insight
         st.markdown("""
