@@ -40,31 +40,25 @@ if df_cleaned is not None:
     st.sidebar.header("Filter Data")
     min_year = df_cleaned.index.year.min()
     max_year = df_cleaned.index.year.max()
-    start_year, end_year = st.sidebar.slider("Pilih Rentang Tahun", min_year, max_year, (min_year, max_year))
+    
+    # Pilihan default: 5 tahun terakhir jika tersedia
+    default_start = max(min_year, max_year - 4)
+    start_year, end_year = st.sidebar.slider("Pilih Rentang Tahun", min_year, max_year, (default_start, max_year))
     
     df_filtered = df_cleaned[(df_cleaned.index.year >= start_year) & (df_cleaned.index.year <= end_year)]
     
     if menu == "Tren Polusi Udara":
         st.subheader("Tren Polusi Udara per Tahun")
 
-        # Gabungan tampilan 5 tahun dalam satu bagan
-        fig, ax = plt.subplots(figsize=(12, 6))
-        df_yearly.plot(kind='bar', ax=ax)
-        ax.set_title("Rata-rata Polutan per Tahun dalam Rentang yang Dipilih")
-        ax.set_ylabel("Konsentrasi (µg/m³)")
-        ax.set_xlabel("Tahun")
-        ax.legend(title="Polutan")
-        ax.grid(axis='y', linestyle='--', alpha=0.7)
-        st.pyplot(fig)
-        
-        # Rata-rata per tahun dalam rentang yang dipilih
         if not df_filtered.empty:
+            # Rata-rata per tahun dalam rentang yang dipilih
             df_yearly = df_filtered.resample('Y').mean(numeric_only=True)
             df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
             
+            # Gabungan tampilan 5 tahun terakhir dalam satu bagan
             fig, ax = plt.subplots(figsize=(12, 6))
             df_yearly.plot(kind='bar', ax=ax)
-            ax.set_title("Rata-rata Polutan per Tahun dalam Rentang yang Dipilih")
+            ax.set_title(f"Rata-rata Polutan per Tahun ({start_year}-{end_year})")
             ax.set_ylabel("Konsentrasi (µg/m³)")
             ax.set_xlabel("Tahun")
             ax.legend(title="Polutan")
@@ -83,14 +77,17 @@ if df_cleaned is not None:
 
     elif menu == "Faktor yang Mempengaruhi Kualitas Udara":
         st.subheader("Faktor yang Mempengaruhi Kualitas Udara")
-        
-        # Visualisasi Korelasi Polutan dan Faktor Lingkungan
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.heatmap(df_filtered[['PM2.5', 'PM10', 'NO2', 'CO', 'O3', 'TEMP', 'PRES', 'DEWP', 'RAIN', 'WSPM']].corr(), 
-                    annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
-        ax.set_title('Korelasi antara Polutan dan Faktor Lingkungan')
-        st.pyplot(fig)
-        
+
+        if not df_filtered.empty:
+            # Visualisasi Korelasi Polutan dan Faktor Lingkungan
+            fig, ax = plt.subplots(figsize=(10, 6))
+            sns.heatmap(df_filtered[['PM2.5', 'PM10', 'NO2', 'CO', 'O3', 'TEMP', 'PRES', 'DEWP', 'RAIN', 'WSPM']].corr(), 
+                        annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
+            ax.set_title('Korelasi antara Polutan dan Faktor Lingkungan')
+            st.pyplot(fig)
+        else:
+            st.warning("Tidak ada data dalam rentang tahun yang dipilih.")
+
         # Insight
         st.markdown("""
         **Insight:**
