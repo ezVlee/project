@@ -36,7 +36,7 @@ if df_cleaned is not None:
     st.sidebar.header("Pilih Analisis")
     menu = st.sidebar.radio("Navigasi", ["Tren Polusi Udara", "Faktor yang Mempengaruhi Kualitas Udara"])
     
-    # Fitur Interaktif: Filter berdasarkan rentang tahun
+    # Fitur Interaktif: Filter berdasarkan range tahun
     min_year = df_cleaned.index.str[:4].astype(int).min()
     max_year = df_cleaned.index.str[:4].astype(int).max()
     start_year, end_year = st.slider("Pilih Rentang Tahun", min_year, max_year, (min_year, max_year))
@@ -46,7 +46,7 @@ if df_cleaned is not None:
     if menu == "Tren Polusi Udara":
         st.subheader("Tren Polusi Udara per Tahun")
         
-        # Rata-rata per bulan dalam rentang yang dipilih
+        # Rata-rata per bulan dalam range yang dipilih
         df_monthly = df_filtered.groupby(df_filtered.index).mean(numeric_only=True)
         df_monthly = df_monthly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
         
