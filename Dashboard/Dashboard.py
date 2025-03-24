@@ -17,7 +17,7 @@ def load_data():
         df = pd.read_csv(url)
         
         # Konversi tanggal
-        df['date'] = pd.to_datetime(df[['year', 'month', 'day', 'hour']])
+        df['date'] = pd.to_datetime(df[['year', 'month']])
         df.set_index('date', inplace=True)
 
         # Hapus nilai NaN
