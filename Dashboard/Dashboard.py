@@ -17,8 +17,8 @@ def load_data():
         df = pd.read_csv(url)
         
         # Konversi tanggal
-        df['date'] = pd.to_datetime(df[['year', 'month']].assign(day=1))
-        df.set_index('date', inplace=True)
+        df['year_month'] = df[['year', 'month']].astype(str).agg('-'.join, axis=1)
+        df.set_index('year_month', inplace=True)
 
         # Hapus nilai NaN
         df_cleaned = df.dropna()
@@ -38,17 +38,17 @@ if df_cleaned is not None:
     
     # Fitur Interaktif: Filter berdasarkan rentang tahun
     st.sidebar.header("Filter Data")
-    min_year = df_cleaned.index.year.min()
-    max_year = df_cleaned.index.year.max()
+    min_year = df_cleaned.index.str[:4].astype(int).min()
+    max_year = df_cleaned.index.str[:4].astype(int).max()
     start_year, end_year = st.sidebar.slider("Pilih Rentang Tahun", min_year, max_year, (min_year, max_year))
     
-    df_filtered = df_cleaned[(df_cleaned.index.year >= start_year) & (df_cleaned.index.year <= end_year)]
+    df_filtered = df_cleaned[(df_cleaned.index.str[:4].astype(int) >= start_year) & (df_cleaned.index.str[:4].astype(int) <= end_year)]
     
     if menu == "Tren Polusi Udara":
         st.subheader("Tren Polusi Udara per Tahun")
         
         # Rata-rata per bulan dalam rentang yang dipilih
-        df_monthly = df_filtered.resample('M').mean(numeric_only=True)
+        df_monthly = df_filtered.groupby(df_filtered.index).mean(numeric_only=True)
         df_monthly = df_monthly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
         
         # Gabungan tampilan tren bulanan dalam satu bagan
