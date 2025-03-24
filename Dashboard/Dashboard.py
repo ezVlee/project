@@ -37,10 +37,9 @@ if df_cleaned is not None:
     menu = st.sidebar.radio("Navigasi", ["Tren Polusi Udara", "Faktor yang Mempengaruhi Kualitas Udara"])
     
     # Fitur Interaktif: Filter berdasarkan rentang tahun
-    st.sidebar.header("Filter Data")
     min_year = df_cleaned.index.str[:4].astype(int).min()
     max_year = df_cleaned.index.str[:4].astype(int).max()
-    start_year, end_year = st.sidebar.slider("Pilih Rentang Tahun", min_year, max_year, (min_year, max_year))
+    start_year, end_year = st.slider("Pilih Rentang Tahun", min_year, max_year, (min_year, max_year))
     
     df_filtered = df_cleaned[(df_cleaned.index.str[:4].astype(int) >= start_year) & (df_cleaned.index.str[:4].astype(int) <= end_year)]
     
