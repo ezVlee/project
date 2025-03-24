@@ -31,40 +31,31 @@ def load_data():
 
 df_cleaned = load_data()
 
-if df_cleaned is not None:
-    # Sidebar
+ # Sidebar
     st.sidebar.header("Pilih Analisis")
     menu = st.sidebar.radio("Navigasi", ["Tren Polusi Udara", "Faktor yang Mempengaruhi Kualitas Udara"])
-
+    
+    # Fitur Interaktif: Filter berdasarkan rentang tahun
+    st.sidebar.header("Filter Data")
+    min_year = df_cleaned.index.year.min()
+    max_year = df_cleaned.index.year.max()
+    start_year, end_year = st.sidebar.slider("Pilih Rentang Tahun", min_year, max_year, (min_year, max_year))
+    
+    df_filtered = df_cleaned[(df_cleaned.index.year >= start_year) & (df_cleaned.index.year <= end_year)]
+    
     if menu == "Tren Polusi Udara":
         st.subheader("Tren Polusi Udara per Tahun")
         
-        # Rata-rata tahunan
-        df_yearly = df_cleaned.resample('Y').mean(numeric_only=True)
+        # Rata-rata per tahun dalam rentang yang dipilih
+        df_yearly = df_filtered.resample('Y').mean(numeric_only=True)
         df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
         
-        for year, row in df_yearly.iterrows():
-            fig, ax = plt.subplots(figsize=(8, 5))
-            bars = ax.bar(row.index, row.values, color=['#FF9999', '#66B2FF', '#99FF99', '#FFCC99', '#C2C2F0'])
-            
-            for bar in bars:
-                yval = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 2), ha='center', va='bottom', fontsize=10)
-
-            ax.set_title(f'Rata-rata Polutan Tahun {year.year}')
-            ax.set_ylabel("Konsentrasi (µg/m³)")
-            ax.set_xlabel("Polutan")
-            ax.grid(axis='y', linestyle='--', alpha=0.7)
-            st.pyplot(fig)
-
-        #Rata-rata perbulan dalam 5 tahun
-        df_monthly_avg = df_cleaned.groupby(df_cleaned.index.month).mean(numeric_only=True)
-        df_monthly_avg = df_monthly_avg[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
+        # Gabungan tampilan 5 tahun dalam satu bagan
         fig, ax = plt.subplots(figsize=(12, 6))
-        df_monthly_avg.plot(kind='bar', ax=ax)
-        ax.set_title("Rata-rata Polutan per Bulan dalam 5 Tahun")
+        df_yearly.plot(kind='bar', ax=ax)
+        ax.set_title("Rata-rata Polutan per Tahun dalam Rentang yang Dipilih")
         ax.set_ylabel("Konsentrasi (µg/m³)")
-        ax.set_xlabel("Bulan")
+        ax.set_xlabel("Tahun")
         ax.legend(title="Polutan")
         ax.grid(axis='y', linestyle='--', alpha=0.7)
         st.pyplot(fig)
@@ -72,22 +63,21 @@ if df_cleaned is not None:
         # Insight
         st.markdown("""
         **Insight:**
-        - Peningkatan polusi di awal tahun bisa disebabkan oleh faktor musiman, seperti peningkatan aktivitas industri dan kondisi atmosfer yang memerangkap polutan.
+        - Peningkatan polusi dapat dipengaruhi oleh faktor musiman dan kebijakan lingkungan.
         - CO sebagai polutan dominan menunjukkan adanya sumber utama seperti kendaraan bermotor dan industri.
-        - Polutan lain punya nilai yang lebih kecil dibanding CO
-        - Setiap awal dan akhir tahun, polutan menagalami kenaikan
+        - Setiap awal dan akhir tahun, polutan mengalami kenaikan.
         """)
 
     elif menu == "Faktor yang Mempengaruhi Kualitas Udara":
         st.subheader("Faktor yang Mempengaruhi Kualitas Udara")
-
+        
         # Visualisasi Korelasi Polutan dan Faktor Lingkungan
         fig, ax = plt.subplots(figsize=(10, 6))
-        sns.heatmap(df_cleaned[['PM2.5', 'PM10', 'NO2', 'CO', 'O3', 'TEMP', 'PRES', 'DEWP', 'RAIN', 'WSPM']].corr(), 
+        sns.heatmap(df_filtered[['PM2.5', 'PM10', 'NO2', 'CO', 'O3', 'TEMP', 'PRES', 'DEWP', 'RAIN', 'WSPM']].corr(), 
                     annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
         ax.set_title('Korelasi antara Polutan dan Faktor Lingkungan')
         st.pyplot(fig)
-
+        
         # Insight
         st.markdown("""
         **Insight:**
