@@ -53,7 +53,7 @@ if df_cleaned is not None:
         
         # Gabungan tampilan tren bulanan dalam satu bagan
         fig, ax = plt.subplots(figsize=(12, 6))
-        df_monthly.plot(ax=ax)
+        df_monthly.plot(kind='bar', ax=ax)
         ax.set_title("Rata-rata Polutan per Bulan dalam Rentang yang Dipilih")
         ax.set_ylabel("Konsentrasi (µg/m³)")
         ax.set_xlabel("Tahun-Bulan")
