@@ -45,12 +45,8 @@ df_cleaned = load_data()
     
     if menu == "Tren Polusi Udara":
         st.subheader("Tren Polusi Udara per Tahun")
-        
-        # Rata-rata per tahun dalam rentang yang dipilih
-        df_yearly = df_filtered.resample('Y').mean(numeric_only=True)
-        df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
-        
-        # Gabungan tampilan 5 tahun dalam satu bagan
+       
+        # 5 tahun
         fig, ax = plt.subplots(figsize=(12, 6))
         df_yearly.plot(kind='bar', ax=ax)
         ax.set_title("Rata-rata Polutan per Tahun dalam Rentang yang Dipilih")
@@ -59,6 +55,11 @@ df_cleaned = load_data()
         ax.legend(title="Polutan")
         ax.grid(axis='y', linestyle='--', alpha=0.7)
         st.pyplot(fig)
+        
+        # Rata-rata per tahun dalam rentang yang dipilih
+        df_yearly = df_filtered.resample('Y').mean(numeric_only=True)
+        df_yearly = df_yearly[['PM2.5', 'PM10', 'NO2', 'CO', 'O3']]
+        
         
         # Insight
         st.markdown("""
